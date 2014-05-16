@@ -2,4 +2,4 @@ Scriptul ia o lista de IP-uri si afiseaza subneturile de care apartin.
 
 Se foloseste de whois ca sa gaseasca subnetul alocat ISP-ului si afiseaza subneturile corespunzatoare pentru mai mult de 5 IP-uri.
 
-Scopul e sa fac o lista de subneturi pe care sa le blochez din firewall, ca sa nu am mii de IP-uri blocate.
+Scopul e sa fac o lista de subneturi pe care sa le blochez din firewall, ca sa nu am mii de IP-uri blocate in cazul atacurilor DDoS.

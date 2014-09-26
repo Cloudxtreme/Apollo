@@ -1,0 +1,60 @@
+#!/usr/bin/perl -w
+#
+# Numele scriptului: sendmail
+# Versiunea scriptului: 2.0
+# Data: 2013 Ianuarie 15
+# Autor: Sergiu Tot
+# Descriere: Script pentru limitarea accesului la functia mail()
+# Utilizare: Se copiaza in /usr/bin/sendmail si se schimba in
+#            php.ini valoarea pentru sendmail_path.
+# 
+
+use POSIX;
+use define LIMITA => 200;
+
+if($> != 0 ) {
+    my $sender = getcwd.$ENV{'SCRIPT_FILENAME'};
+    my $user = $1 if( $sender =~ /^\/home\/(\w+)/ );
+    my $count=0;
+
+    # Aici vor fi scrise toate evenimentele
+    if( open(LOG,"/var/log/phpmail.log") ){
+        while( <LOG> ){
+            $count+=1 if( $_ =~ /$user\:/ );
+        }
+        close(LOG);
+    } else {
+        exit;
+    }
+
+    if( open(LOG,">>/var/log/phpmail.log") ){
+        my $data = `date`;
+        chomp $data;
+
+    if( -f '/home/admin/mail_blacklist' ) {
+        if( open(BLACK, '/home/admin/mail_blacklist') ) {
+            my @blacklist = <BLACK>;
+            chomp @blacklist;
+            foreach my $blUser (@blacklist) {
+                if( $blUser eq $user) {
+                    print LOG "$data:$user:$sender:bl-ignored \n";
+                    close(LOG);
+                    exit;
+                }
+            }
+            close(BLACK);
+        }
+    }
+    if( $count > LIMITA ){
+        print LOG "$data:$user:$sender:ignored \n";
+    }else{
+        print LOG "$data:$user:$sender:sent \n";
+        exec {"/usr/sbin/sendmail"} ('/usr/bin/sendmail',@ARGV);
+    }
+    close(LOG);
+    } else {
+        exit;
+    }
+} else {
+    exec {"/usr/sbin/sendmail"} ('/usr/bin/sendmail',@ARGV);
+}

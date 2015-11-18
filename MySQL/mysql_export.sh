@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+export PATH=/bin:/usr/bin
 
 DBS=0 # Total databasses
 TBS=0 # Total tables
@@ -9,7 +11,7 @@ WKDIR="/backup/${CDATE}"
 
 mkdir -p $WKDIR
 
-for DB in $(mysql -sNe "SHOW DATABASES;")
+for DB in $(mysql --defaults-file=/root/.my.cnf -sNe "SHOW DATABASES;")
 do
     # Exclude metadata
     if [[ ${DB} != 'information_schema' ]]
@@ -20,11 +22,11 @@ do
         mkdir -p ${DBDIR}
         DBS=$((${DBS}+1))
         # Loop through the tables
-        for TBL in `mysql ${DB} -sNe "SHOW TABLES;"`
+        for TBL in `mysql --defaults-file=/root/.my.cnf ${DB} -sNe "SHOW TABLES;"`
         do
             # Export the tables and compress the result
             echo -n "  Exporting table ${DB}.${TBL}..."
-            mysqldump --opt ${DB} ${TBL} | gzip -9 > "${DBDIR}/${TBL}.sql.gz"
+            mysqldump --defaults-file=/root/.my.cnf --opt ${DB} ${TBL} | gzip -9 > "${DBDIR}/${TBL}.sql.gz"
             if [ $? -eq 0 ]; then echo "Done."; TBS=$((${TBS}+1)); else echo "Failed."; fi;
         done
     fi

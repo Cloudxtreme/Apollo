@@ -26,7 +26,7 @@ do
         do
             # Export the tables and compress the result
             echo -n "  Exporting table ${DB}.${TBL}..."
-            mysqldump --defaults-file=/root/.my.cnf --opt ${DB} ${TBL} | gzip -9 > "${DBDIR}/${TBL}.sql.gz"
+            mysqldump --defaults-file=/root/.my.cnf --opt ${DB} ${TBL} | bzip2 -9 > "${DBDIR}/${TBL}.sql.gz"
             if [ $? -eq 0 ]; then echo "Done."; TBS=$((${TBS}+1)); else echo "Failed."; fi;
         done
     fi

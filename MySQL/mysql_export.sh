@@ -1,7 +1,17 @@
 #!/bin/sh
+# Title        : mysql_export.sh
+# Description  : Exports all MySQL databases, one folder per database and
+#                one file per table
+# Author       : Sergiu Tot <lamp@lamp.ro>
+# Date         : 19 November 2015
+# Version      : 1.0
+# Usage        : ./mysql_export.sh
+# Notes        : By default, everything will be saved in the /backup dir.
+# Bash version : 4.1.2(1)-release
 
 export PATH=/bin:/usr/bin
 
+# Statistics
 DBS=0 # Total databasses
 TBS=0 # Total tables
 
